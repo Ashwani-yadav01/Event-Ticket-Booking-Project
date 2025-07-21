@@ -21,15 +21,21 @@ public class CreateEventRequestDto {
     private String name;
 
     private LocalDateTime start;
+
     private LocalDateTime end;
+
     @NotBlank(message = "Venue information is required")
     private String venue;
+
     private LocalDateTime salesStart;
+
     private LocalDateTime salesEnd;
-    @NotNull(message = "Event Status must be provided")
+
+    @NotNull(message = "Event status must be provided")
     private EventStatusEnum status;
+
     @NotEmpty(message = "At least one ticket type is required")
     @Valid
-    private List<CreateEventRequestDto> ticketTypes;
+    private List<CreateTicketTypeRequestDto> ticketTypes;
 
 }
