@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -60,5 +61,10 @@ public class EventServiceImpl implements EventService {
     public Page<Event> listEventsForOrganizer(UUID organizerId, Pageable pageable) {
 
         return  eventRepository.findByOrganizerId(organizerId,pageable);
+    }
+
+    @Override
+    public Optional<Event> getEventForOrganizer(UUID organizerID, UUID id) {
+        return eventRepository.findByIdAndOrganizerId(id, organizerID);
     }
 }
