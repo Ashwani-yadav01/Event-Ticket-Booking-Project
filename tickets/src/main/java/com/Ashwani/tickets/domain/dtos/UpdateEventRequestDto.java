@@ -11,11 +11,17 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateEventRequestDto {
+public class UpdateEventRequestDto {
+
+    @NotNull(message = "Event ID must be provided")
+    private UUID id;
+
+
     @NotBlank(message = "Event name is required")
     private String name;
 
@@ -35,6 +41,6 @@ public class CreateEventRequestDto {
 
     @NotEmpty(message = "At least one ticket type is required")
     @Valid
-    private List<CreateTicketTypeRequestDto> ticketTypes;
+    private List<UpdateTicketTypeRequestDto> ticketTypes;
 
 }

@@ -1,6 +1,9 @@
 package com.Ashwani.tickets.controllers;
 
 import com.Ashwani.tickets.domain.dtos.ErrorDto;
+import com.Ashwani.tickets.exceptions.EventNotFoundException;
+import com.Ashwani.tickets.exceptions.EventUpdateException;
+import com.Ashwani.tickets.exceptions.TicketTypeNotFoundException;
 import com.Ashwani.tickets.exceptions.UserNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +22,30 @@ import java.util.List;
 public class GlobalExceptionHandler {
 
 
+    @ExceptionHandler(EventUpdateException.class)
+    public ResponseEntity<ErrorDto> handleEventUpdateException(EventUpdateException ex) {
+        log.error("Caught EventUpdateException", ex);
+        ErrorDto errorDto = new ErrorDto();
+        errorDto.setError("Unable to update event");
+        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(TicketTypeNotFoundException.class)
+    public ResponseEntity<ErrorDto> handleTicketNotFoundException(TicketTypeNotFoundException ex) {
+        log.error("Caught TicketNotFoundException", ex);
+        ErrorDto errorDto = new ErrorDto();
+        errorDto.setError("Ticket type  not found");
+        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(EventNotFoundException.class)
+    public ResponseEntity<ErrorDto> handleEventNotFoundException(EventNotFoundException ex) {
+        log.error("Caught EventNotFoundException", ex);
+        ErrorDto errorDto = new ErrorDto();
+        errorDto.setError("Event  not found");
+        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ErrorDto> handleUserNotFoundException(UserNotFoundException ex) {
         log.error("Caught UserNotFoundException", ex);
@@ -26,16 +53,17 @@ public class GlobalExceptionHandler {
         errorDto.setError("User not found");
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorDto> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex){
 
-        log.error("Caught MethodArgumentNotValid Exception",ex);
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorDto> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+
+        log.error("Caught MethodArgumentNotValid Exception", ex);
         BindingResult bindingResult = ex.getBindingResult();
-        List<FieldError> fieldErrors =bindingResult.getFieldErrors();
+        List<FieldError> fieldErrors = bindingResult.getFieldErrors();
         String errorMessage = fieldErrors.stream().findFirst().map(fieldError -> fieldError.getField() + ":" + fieldError.getDefaultMessage())
                 .orElse("Validation error occurred");
 
-        ErrorDto errorDto= new ErrorDto();
+        ErrorDto errorDto = new ErrorDto();
         errorDto.setError(errorMessage);
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
 
@@ -43,9 +71,9 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ErrorDto> handleConstraintViolation(ConstraintViolationException ex){
-        log.error("Caught ConstraintViolation Exception",ex);
-        ErrorDto errorDto= new ErrorDto();
+    public ResponseEntity<ErrorDto> handleConstraintViolation(ConstraintViolationException ex) {
+        log.error("Caught ConstraintViolation Exception", ex);
+        ErrorDto errorDto = new ErrorDto();
         String errorMessage = ex.getConstraintViolations().stream().findFirst().map(violation -> violation.getPropertyPath() + ":" + violation.getMessage())
                 .orElse("Constraint Violation occurred");
 
@@ -54,9 +82,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorDto> handleException(Exception ex){
-        log.error("Caught Exception",ex);
-        ErrorDto errorDto= new ErrorDto();
+    public ResponseEntity<ErrorDto> handleException(Exception ex) {
+        log.error("Caught Exception", ex);
+        ErrorDto errorDto = new ErrorDto();
         errorDto.setError("An unknown error occurred");
         return new ResponseEntity<>(errorDto, HttpStatus.INTERNAL_SERVER_ERROR);
     }
