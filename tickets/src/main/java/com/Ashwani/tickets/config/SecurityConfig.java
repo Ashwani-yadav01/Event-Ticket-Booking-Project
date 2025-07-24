@@ -19,9 +19,10 @@ public class SecurityConfig {
             HttpSecurity http,
             UserProvisioningFilter userProvisioningFilter,
             JwtAuthenticationConverter jwtAuthenticationConverter) throws Exception {
-        http.authorizeHttpRequests(authorize -> authorize
+        http
+                .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.GET, "/api/v1/published-events/**").permitAll()
-                        .requestMatchers("/api/v1/events").hasRole("Organizer")
+                        .requestMatchers("/api/v1/events/**").hasRole("ORGANIZER")//yaha change **add kiya hu
                         .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

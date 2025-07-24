@@ -18,19 +18,22 @@ public class JwtAuthenticationConverter implements Converter<Jwt, JwtAuthenticat
     @Override
     public JwtAuthenticationToken convert(Jwt jwt) {
         Collection<GrantedAuthority> authorities = extractAuthorities(jwt);
-
         return new JwtAuthenticationToken(jwt, authorities);
     }
 
     private Collection<GrantedAuthority> extractAuthorities(Jwt jwt) {
         Map<String, Object> realmAccess = jwt.getClaim("realm_access");
+
         if (null == realmAccess || !realmAccess.containsKey("roles")) {
             return Collections.emptyList();
         }
+
         @SuppressWarnings("unchecked")
         List<String> roles = (List<String>) realmAccess.get("roles");
+        System.out.println("Extracted Roles: " + roles);
 
-        return roles.stream().filter(role -> role.startsWith("Role_"))
+        return roles.stream()
+                .filter(role -> role.startsWith("ROLE_"+ role.toUpperCase()))
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }
