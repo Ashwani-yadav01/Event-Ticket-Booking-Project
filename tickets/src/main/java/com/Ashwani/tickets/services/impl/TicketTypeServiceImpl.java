@@ -4,7 +4,7 @@ import com.Ashwani.tickets.domain.entities.Ticket;
 import com.Ashwani.tickets.domain.entities.TicketStatusEnum;
 import com.Ashwani.tickets.domain.entities.TicketType;
 import com.Ashwani.tickets.domain.entities.User;
-import com.Ashwani.tickets.exceptions.TicketSoldOutException;
+import com.Ashwani.tickets.exceptions.TicketsSoldOutException;
 import com.Ashwani.tickets.exceptions.TicketTypeNotFoundException;
 import com.Ashwani.tickets.exceptions.UserNotFoundException;
 import com.Ashwani.tickets.repositories.TicketRepository;
@@ -27,23 +27,23 @@ public class TicketTypeServiceImpl implements TicketTypeService {
     private final TicketRepository ticketRepository;
     private final QrCodeService qrCodeService;
 
-
     @Override
     @Transactional
     public Ticket purchaseTicket(UUID userId, UUID ticketTypeId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(
                 String.format("User with ID %s was not found", userId)
         ));
+
         TicketType ticketType = ticketTypeRepository.findByIdWithLock(ticketTypeId)
                 .orElseThrow(() -> new TicketTypeNotFoundException(
                         String.format("Ticket type with ID %s was not found", ticketTypeId)
                 ));
 
-        int purchasedTicket = ticketRepository.countByTicketTypeId(ticketType.getId());
-
+        int purchasedTickets = ticketRepository.countByTicketTypeId(ticketType.getId());
         Integer totalAvailable = ticketType.getTotalAvailable();
-        if (purchasedTicket + 1 > totalAvailable) {
-            throw new TicketSoldOutException();
+
+        if(purchasedTickets + 1 > totalAvailable) {
+            throw new TicketsSoldOutException();
         }
 
         Ticket ticket = new Ticket();

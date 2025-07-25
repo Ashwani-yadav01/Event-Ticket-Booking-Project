@@ -3,26 +3,18 @@ import { useAuth } from "react-oidc-context";
 import { useNavigate } from "react-router";
 
 const CallbackPage: React.FC = () => {
-  const { isLoading, isAuthenticated } = useAuth();
+  const auth = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (isLoading) {
-      return;
+    if (!auth.isLoading && auth.isAuthenticated) {
+      const redirectPath = localStorage.getItem("redirectPath") || "/dashboard";
+      localStorage.removeItem("redirectPath");
+      navigate(redirectPath);
+    } else if (!auth.isLoading && auth.error) {
+      console.error("OIDC Login Error:", auth.error);
     }
-
-    if (isAuthenticated) {
-      const redirectPath = localStorage.getItem("redirectPath");
-      if (redirectPath) {
-        localStorage.removeItem("redirectPath");
-        navigate(redirectPath);
-      }
-    }
-  }, [isLoading, isAuthenticated, navigate]);
-
-  if (isLoading) {
-    return <p>Processing login...</p>;
-  }
+  }, [auth.isLoading, auth.isAuthenticated, auth.error, navigate]);
 
   return <p>Completing login...</p>;
 };

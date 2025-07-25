@@ -14,6 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdateEventRequest {
+
     private UUID id;
     private String name;
     private LocalDateTime start;
@@ -24,3 +25,4 @@ public class UpdateEventRequest {
     private EventStatusEnum status;
     private List<UpdateTicketTypeRequest> ticketTypes = new ArrayList<>();
 }
+

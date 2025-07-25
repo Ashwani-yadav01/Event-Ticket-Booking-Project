@@ -14,9 +14,10 @@ import java.util.UUID;
 
 @Repository
 public interface EventRepository extends JpaRepository<Event, UUID> {
+
     Page<Event> findByOrganizerId(UUID organizerId, Pageable pageable);
 
-    Optional<Event> findByIdAndOrganizerId(UUID id, UUID organizerID);
+    Optional<Event> findByIdAndOrganizerId(UUID id, UUID organizerId);
 
     Page<Event> findByStatus(EventStatusEnum status, Pageable pageable);
 

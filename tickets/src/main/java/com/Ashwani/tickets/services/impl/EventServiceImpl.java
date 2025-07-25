@@ -10,6 +10,7 @@ import com.Ashwani.tickets.domain.entities.User;
 import com.Ashwani.tickets.exceptions.EventNotFoundException;
 import com.Ashwani.tickets.exceptions.EventUpdateException;
 import com.Ashwani.tickets.exceptions.TicketTypeNotFoundException;
+import com.Ashwani.tickets.exceptions.UserNotFoundException;
 import com.Ashwani.tickets.repositories.EventRepository;
 import com.Ashwani.tickets.repositories.UserRepository;
 import com.Ashwani.tickets.services.EventService;
@@ -28,29 +29,29 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
 
-
     private final UserRepository userRepository;
-
     private final EventRepository eventRepository;
 
     @Override
     @Transactional
     public Event createEvent(UUID organizerId, CreateEventRequest event) {
         User organizer = userRepository.findById(organizerId)
-                .orElseThrow(() -> new UsernameNotFoundException(
-                        String.format("User with ID '%s not found", organizerId)));
+                .orElseThrow(() -> new UserNotFoundException(
+                        String.format("User with ID '%s' not found", organizerId))
+                );
 
         Event eventToCreate = new Event();
 
-        List<TicketType> ticketTypesToCreate = event.getTicketTypes().stream().map(ticketType -> {
-            TicketType ticketTypeToCreate = new TicketType();
-            ticketTypeToCreate.setName(ticketType.getName());
-            ticketTypeToCreate.setPrice(ticketType.getPrice());
-            ticketTypeToCreate.setDescription(ticketType.getDescription());
-            ticketTypeToCreate.setTotalAvailable(ticketType.getTotalAvailable());
-            ticketTypeToCreate.setEvent(eventToCreate);
-            return ticketTypeToCreate;
-        }).toList();
+        List<TicketType> ticketTypesToCreate = event.getTicketTypes().stream().map(
+                ticketType -> {
+                    TicketType ticketTypeToCreate = new TicketType();
+                    ticketTypeToCreate.setName(ticketType.getName());
+                    ticketTypeToCreate.setPrice(ticketType.getPrice());
+                    ticketTypeToCreate.setDescription(ticketType.getDescription());
+                    ticketTypeToCreate.setTotalAvailable(ticketType.getTotalAvailable());
+                    ticketTypeToCreate.setEvent(eventToCreate);
+                    return ticketTypeToCreate;
+                }).toList();
 
         eventToCreate.setName(event.getName());
         eventToCreate.setStart(event.getStart());
@@ -67,27 +68,30 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Page<Event> listEventsForOrganizer(UUID organizerId, Pageable pageable) {
-
         return eventRepository.findByOrganizerId(organizerId, pageable);
     }
 
     @Override
-    public Optional<Event> getEventForOrganizer(UUID organizerID, UUID id) {
-        return eventRepository.findByIdAndOrganizerId(id, organizerID);
+    public Optional<Event> getEventForOrganizer(UUID organizerId, UUID id) {
+        return eventRepository.findByIdAndOrganizerId(id, organizerId);
     }
 
     @Override
     @Transactional
     public Event updateEventForOrganizer(UUID organizerId, UUID id, UpdateEventRequest event) {
-        if (event.getId() == null) {
-            throw new EventUpdateException("EventId can not be null");
+        if (null == event.getId()) {
+            throw new EventUpdateException("Event ID cannot be null");
         }
-        if (!id.equals(organizerId)) {
-            throw new EventUpdateException("Provided Ids do not match");
+
+        if (!id.equals(event.getId())) {
+            throw new EventUpdateException("Cannot update the ID of an event");
         }
-        Event existingEvent = eventRepository.findByIdAndOrganizerId(id, organizerId)
+
+        Event existingEvent = eventRepository
+                .findByIdAndOrganizerId(id, organizerId)
                 .orElseThrow(() -> new EventNotFoundException(
-                        String.format("Event with Id '%s' does not exist", id)));
+                        String.format("Event with ID '%s' does not exist", id))
+                );
 
         existingEvent.setName(event.getName());
         existingEvent.setStart(event.getStart());
@@ -106,6 +110,7 @@ public class EventServiceImpl implements EventService {
         existingEvent.getTicketTypes().removeIf(existingTicketType ->
                 !requestTicketTypeIds.contains(existingTicketType.getId())
         );
+
         Map<UUID, TicketType> existingTicketTypesIndex = existingEvent.getTicketTypes().stream()
                 .collect(Collectors.toMap(TicketType::getId, Function.identity()));
 
@@ -157,5 +162,6 @@ public class EventServiceImpl implements EventService {
     public Optional<Event> getPublishedEvent(UUID id) {
         return eventRepository.findByIdAndStatus(id, EventStatusEnum.PUBLISHED);
     }
+
 
 }

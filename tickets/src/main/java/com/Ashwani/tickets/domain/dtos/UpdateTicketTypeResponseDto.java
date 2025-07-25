@@ -14,7 +14,7 @@ public class UpdateTicketTypeResponseDto {
 
     private UUID id;
     private String name;
-    private  Double price;
+    private Double price;
     private String description;
     private Integer totalAvailable;
     private LocalDateTime createdAt;

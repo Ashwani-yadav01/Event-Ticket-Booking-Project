@@ -12,6 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetPublishedEventDetailsResponseDto {
+
     private UUID id;
     private String name;
     private LocalDateTime start;

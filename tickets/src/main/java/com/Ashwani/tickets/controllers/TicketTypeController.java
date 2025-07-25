@@ -19,6 +19,7 @@ import static com.Ashwani.tickets.util.JwtUtil.parseUserId;
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/v1/events/{eventId}/ticket-types")
 public class TicketTypeController {
+
     private final TicketTypeService ticketTypeService;
 
     @PostMapping(path = "/{ticketTypeId}/tickets")
@@ -29,4 +30,5 @@ public class TicketTypeController {
         ticketTypeService.purchaseTicket(parseUserId(jwt), ticketTypeId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
 }

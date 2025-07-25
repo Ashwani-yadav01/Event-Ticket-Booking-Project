@@ -21,7 +21,6 @@ public class UpdateEventRequestDto {
     @NotNull(message = "Event ID must be provided")
     private UUID id;
 
-
     @NotBlank(message = "Event name is required")
     private String name;
 

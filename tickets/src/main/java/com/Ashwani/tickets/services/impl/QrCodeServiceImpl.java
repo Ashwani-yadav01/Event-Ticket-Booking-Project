@@ -28,8 +28,8 @@ import java.util.UUID;
 @Slf4j
 public class QrCodeServiceImpl implements QrCodeService {
 
-    private final static int QR_HEIGHT = 300;
-    private final static int QR_WIDTH = 300;
+    private static final int QR_HEIGHT = 300;
+    private static final int QR_WIDTH = 300;
 
     private final QRCodeWriter qrCodeWriter;
     private final QrCodeRepository qrCodeRepository;
@@ -39,6 +39,7 @@ public class QrCodeServiceImpl implements QrCodeService {
         try {
             UUID uniqueId = UUID.randomUUID();
             String qrCodeImage = generateQrCodeImage(uniqueId);
+
             QrCode qrCode = new QrCode();
             qrCode.setId(uniqueId);
             qrCode.setStatus(QrCodeStatusEnum.ACTIVE);
@@ -46,10 +47,10 @@ public class QrCodeServiceImpl implements QrCodeService {
             qrCode.setTicket(ticket);
 
             return qrCodeRepository.saveAndFlush(qrCode);
-        } catch (WriterException | IOException exception) {
-            throw new QrCodeGenerationException("Failed to generate QrCode", exception);
-        }
 
+        } catch(IOException | WriterException ex) {
+            throw new QrCodeGenerationException("Failed to generate QR Code", ex);
+        }
     }
 
     @Override
@@ -70,15 +71,18 @@ public class QrCodeServiceImpl implements QrCodeService {
                 uniqueId.toString(),
                 BarcodeFormat.QR_CODE,
                 QR_WIDTH,
-                QR_HEIGHT);
+                QR_HEIGHT
+        );
+
         BufferedImage qrCodeImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+
+        try(ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             ImageIO.write(qrCodeImage, "PNG", baos);
             byte[] imageBytes = baos.toByteArray();
-            return Base64.getEncoder().encodeToString(imageBytes);
 
+            return Base64.getEncoder().encodeToString(imageBytes);
         }
 
     }
-}
 
+}

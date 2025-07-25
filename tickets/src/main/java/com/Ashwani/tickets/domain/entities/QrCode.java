@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name="qr_codes")
+@Table(name = "qr_codes")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -19,14 +19,14 @@ import java.util.UUID;
 public class QrCode {
 
     @Id
-    @Column(name = "id",updatable = false,nullable = false)
+    @Column(name = "id", nullable = false, updatable = false)
     private UUID id;
 
-    @Column(name = "status",nullable = false)
+    @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     private QrCodeStatusEnum status;
 
-    @Column(name = "value",columnDefinition = "TEXT",nullable = false)
+    @Column(name = "value", columnDefinition = "TEXT", nullable = false)
     private String value;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -34,7 +34,7 @@ public class QrCode {
     private Ticket ticket;
 
     @CreatedDate
-    @Column(name = "created_at",updatable = false, nullable = false)
+    @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
@@ -43,10 +43,13 @@ public class QrCode {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         QrCode qrCode = (QrCode) o;
-        return Objects.equals(id, qrCode.id) && status == qrCode.status && Objects.equals(value, qrCode.value)  && Objects.equals(createdAt, qrCode.createdAt) && Objects.equals(updatedAt, qrCode.updatedAt);
+        return Objects.equals(id, qrCode.id) && status == qrCode.status && Objects.equals(value,
+                qrCode.value) && Objects.equals(createdAt, qrCode.createdAt) && Objects.equals(updatedAt,
+                qrCode.updatedAt);
     }
 
     @Override

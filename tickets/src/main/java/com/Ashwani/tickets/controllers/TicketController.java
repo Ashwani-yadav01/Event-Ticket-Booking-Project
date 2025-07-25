@@ -26,6 +26,7 @@ import static com.Ashwani.tickets.util.JwtUtil.parseUserId;
 @RequestMapping(path = "/api/v1/tickets")
 @RequiredArgsConstructor
 public class TicketController {
+
     private final TicketService ticketService;
     private final TicketMapper ticketMapper;
     private final QrCodeService qrCodeService;
@@ -69,4 +70,5 @@ public class TicketController {
                 .headers(headers)
                 .body(qrCodeImage);
     }
+
 }

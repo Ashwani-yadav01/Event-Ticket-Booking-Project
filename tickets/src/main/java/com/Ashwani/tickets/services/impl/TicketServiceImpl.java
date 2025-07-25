@@ -14,8 +14,8 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class TicketServiceImpl implements TicketService {
-    private final TicketRepository ticketRepository;
 
+    private final TicketRepository ticketRepository;
 
     @Override
     public Page<Ticket> listTicketsForUser(UUID userId, Pageable pageable) {
@@ -27,3 +27,4 @@ public class TicketServiceImpl implements TicketService {
         return ticketRepository.findByIdAndPurchaserId(ticketId, userId);
     }
 }
+

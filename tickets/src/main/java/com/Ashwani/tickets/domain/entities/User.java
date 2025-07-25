@@ -12,23 +12,25 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name="users")
+@Table(name = "users")
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class User {
+
     @Id
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
+
     @Column(name = "name", nullable = false)
-    private  String name;
+    private String name;
 
     @Column(name = "email", nullable = false)
     private String email;
 
     @OneToMany(mappedBy = "organizer", cascade = CascadeType.ALL)
-    List<Event> organizedEvents=new ArrayList<>();
+    private List<Event> organizedEvents = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
@@ -36,7 +38,7 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "event_id")
     )
-    List<Event> attendingEvents=new ArrayList<>();
+    private List<Event> attendingEvents = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
@@ -44,27 +46,29 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "event_id")
     )
-    List<Event> staffingEvents=new ArrayList<>();
+    private List<Event> staffingEvents = new ArrayList<>();
 
     @CreatedDate
-    @Column(name = "created_at",updatable = false, nullable = false)
+    @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(email, user.email) && Objects.equals(createdAt, user.createdAt) && Objects.equals(updatedAt, user.updatedAt);
+        return Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(email,
+                user.email) && Objects.equals(createdAt, user.createdAt) && Objects.equals(updatedAt,
+                user.updatedAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, email,  createdAt, updatedAt);
+        return Objects.hash(id, name, email, createdAt, updatedAt);
     }
 }

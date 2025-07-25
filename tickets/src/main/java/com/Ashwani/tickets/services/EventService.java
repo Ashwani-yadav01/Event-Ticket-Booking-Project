@@ -10,11 +10,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface EventService {
+
     Event createEvent(UUID organizerId, CreateEventRequest event);
 
     Page<Event> listEventsForOrganizer(UUID organizerId, Pageable pageable);
 
-    Optional<Event> getEventForOrganizer(UUID organizerID, UUID id);
+    Optional<Event> getEventForOrganizer(UUID organizerId, UUID id);
 
     Event updateEventForOrganizer(UUID organizerId, UUID id, UpdateEventRequest event);
 
@@ -22,8 +23,7 @@ public interface EventService {
 
     Page<Event> listPublishedEvents(Pageable pageable);
 
-    Page<Event> searchPublishedEvents(String query,Pageable pageable);
+    Page<Event> searchPublishedEvents(String query, Pageable pageable);
 
     Optional<Event> getPublishedEvent(UUID id);
-
 }
